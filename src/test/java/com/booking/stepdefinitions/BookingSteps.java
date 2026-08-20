@@ -18,7 +18,7 @@ public class BookingSteps {
     private BookingRequest bookingRequest;
     private Response response;
 
-    @Given("I have a valid booking request with:")
+    @Given("I have a booking request with")
     public void createBookingRequest(DataTable dataTable) {
         Map<String, String> bookingData = dataTable.asMap(String.class, String.class);
 
@@ -44,7 +44,7 @@ public class BookingSteps {
 
     @Then("the booking should be created successfully")
     public void verifyBookingCreated() {
-        assertEquals(200, response.getStatusCode());
+        assertEquals(201, response.getStatusCode());
         assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING_ID));
         assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING));
         assertEquals(bookingRequest.getRoomid(),
@@ -63,5 +63,15 @@ public class BookingSteps {
                 response.jsonPath().getString(ApiResponsePaths.CHECK_IN));
         assertEquals(bookingRequest.getBookingdates().getCheckout(),
                 response.jsonPath().getString(ApiResponsePaths.CHECK_OUT));
+    }
+
+    @Then("the booking request should be rejected with status code {int}")
+    public void verifyBookingRejected(int expectedStatusCode) {
+        assertEquals(expectedStatusCode, response.getStatusCode());
+    }
+
+    @When("I create the booking without the {string} field")
+    public void createBookingWithoutField(String fieldName) {
+        response = bookingService.createBookingWithoutField(bookingRequest,fieldName);
     }
 }
