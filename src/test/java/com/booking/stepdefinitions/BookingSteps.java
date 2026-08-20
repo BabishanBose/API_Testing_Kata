@@ -9,7 +9,11 @@ import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
+
+import java.util.List;
 import java.util.Map;
+
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -45,6 +49,16 @@ public class BookingSteps {
     @Then("the booking request should be {string} with status code {int}")
     public void verifyBookingResponse(String expectedResult, int expectedStatusCode) {
         assertEquals(expectedStatusCode, response.getStatusCode());
+        if (expectedStatusCode == 400) {
+            assertNotNull(response.jsonPath().get("errors"));
+        }
+    }
+
+    @Then("the response should contain error {string}")
+    public void verifyResponseError(String expectedError) {
+        List<String> errors = response.jsonPath().getList("errors");
+        assertNotNull(errors);
+        assertTrue(errors.contains(expectedError));
     }
 
     @Then("the booking details should match the request")
