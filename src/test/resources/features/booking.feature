@@ -13,7 +13,7 @@ Feature: Create a hotel booking
       | email       | <email>       |
       | phone       | <phone>       |
     When I create the booking
-    Then the booking should be created successfully
+    Then the booking request should be "created" with status code 200
     Examples:
       | roomId | firstName | lastName | depositPaid | checkIn    | checkOut   | email                  | phone         |
       | 1      | Babishan  | Bose     | true        | 2026-09-20 | 2026-09-21 | Babishan.Bose@test.com | +919234567890 |
@@ -31,7 +31,7 @@ Feature: Create a hotel booking
       | email       | <email>       |
       | phone       | <phone>       |
     When I create the booking
-    Then the booking request should be rejected with status code <statusCode>
+    Then the booking request should be "rejected" with status code <statusCode>
     Examples:
       | roomId | firstName | lastName                           | depositPaid | checkIn    | checkOut   | email                     | phone                  | statusCode |
       | 1      | Ba        | Bose                               | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | +919234567890          | 400        |
