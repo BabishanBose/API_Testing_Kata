@@ -19,7 +19,7 @@ Feature: Create a hotel booking
       | 1      | Babishan  | Bose     | true        | 2026-09-20 | 2026-09-21 | Babishan.Bose@test.com | +919234567890 |
       | 2      | Durga     | Prasad   | false       | 2026-09-20 | 2026-09-21 | Durga.Prasad@test.com  | +919234567891 |
 
-  @regression @negative
+  @regression @negative @data-validation
   Scenario Outline: Reject booking with invalid field data
     Given I have a booking request with
       | roomId      | <roomId>      |
@@ -33,10 +33,14 @@ Feature: Create a hotel booking
     When I create the booking
     Then the booking request should be rejected with status code <statusCode>
     Examples:
-      | roomId | firstName | lastName                           | depositPaid | checkIn    | checkOut   | email                     | phone         | statusCode |
-      | 1      | Ba        | Bose                               | true        | 2026-09-20 | 2026-09-21 | Babishan.Bose@example.com | +919234567890 | 400        |
-      | 2      | Babishan  | ThisLastnameIsTooLongValueToCreate | true        | 2026-09-20 | 2026-09-21 | Babishan.Bose@example.com | +919234567890 | 400        |
-      | 3      | Babishan  | Bose                               | true        | 2026-09-20 | 2026-09-21 | invalid-email             | +919234567890 | 400        |
+      | roomId | firstName | lastName                           | depositPaid | checkIn    | checkOut   | email                     | phone                  | statusCode |
+      | 1      | Ba        | Bose                               | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | +919234567890          | 400        |
+      | 2      | Babishan  | ThisLastnameIsTooLongValueToCreate | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | +919234567890          | 400        |
+      | 3      | Babishan  | Bo                                 | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | +919234567890          | 400        |
+      | 4      | Babishan  | Bose                               | true        | 2030-08-20 | 2030-08-21 | invalid-email             | +919234567890          | 400        |
+      | 5      | Babishan  | Bose                               | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | 1234567890             | 400        |
+      | 6      | Babishan  | Bose                               | true        | 2030-08-20 | 2030-08-21 | Babishan.Bose@example.com | 1234567890123456789012 | 400        |
+      | 7      | Babishan  | Bose                               | true        | 20-08-2030 | 21-08-2030 | Babishan.Bose@example.com | +919234567890          | 400        |
 
   @regression @negative @date-validation
   Scenario: Reject booking when checkout date is before check-in date
@@ -55,22 +59,22 @@ Feature: Create a hotel booking
   @regression @negative @required-fields-validation
   Scenario Outline: Reject booking when a required field is missing
     Given I have a booking request with
-      | roomId      | 1                    |
-      | firstName   | Babishan             |
-      | lastName    | Bose                 |
-      | depositPaid | true                 |
-      | checkIn     | 2030-08-20           |
-      | checkOut    | 2030-08-21           |
+      | roomId      | 1                      |
+      | firstName   | Babishan               |
+      | lastName    | Bose                   |
+      | depositPaid | true                   |
+      | checkIn     | 2030-08-20             |
+      | checkOut    | 2030-08-21             |
       | email       | Babishan.Bose@test.com |
-      | phone       | +919234567890        |
+      | phone       | +919234567890          |
     When I create the booking without the "<field>" field
     Then the booking request should be rejected with status code <statusCode>
     Examples:
-      | field       | statusCode |
-      | roomid      | 400        |
-      | firstname   | 400        |
-      | lastname    | 400        |
-      | depositpaid | 400        |
-      | bookingdates| 400        |
-      | email       | 400        |
-      | phone       | 400        |
+      | field        | statusCode |
+      | roomid       | 400        |
+      | firstname    | 400        |
+      | lastname     | 400        |
+      | depositpaid  | 400        |
+      | bookingdates | 400        |
+      | email        | 400        |
+      | phone        | 400        |
