@@ -46,7 +46,10 @@ cd API_Testing_Kata
 Maven will download all project dependencies defined in pom.xml.
 mvn clean install
 
+
 ## Running Tests
+### Run tests with credentials
+mvn clean test -Dusername=admin -Dpassword=password
 ### Run All Tests
 mvn clean test
 ### Run Smoke Tests
