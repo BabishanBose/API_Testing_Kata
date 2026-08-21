@@ -50,7 +50,7 @@ public class BookingSteps {
     @Then("the booking request should be {string} with status code {int}")
     public void verifyBookingResponse(String expectedResult, int expectedStatusCode) {
         assertEquals(expectedStatusCode, response.getStatusCode());
-        if (expectedStatusCode == 400) {
+        if ("rejected".equalsIgnoreCase(expectedResult)) {
             assertNotNull(response.jsonPath().get("errors"));
         }
     }
