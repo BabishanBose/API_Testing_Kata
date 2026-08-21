@@ -4,18 +4,18 @@ import com.booking.constants.ApiResponsePaths;
 import com.booking.dto.request.BookingDates;
 import com.booking.dto.request.BookingRequest;
 import com.booking.service.BookingService;
+import com.booking.utils.SchemaValidator;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.When;
 import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
-
 import java.util.List;
 import java.util.Map;
-
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 
 public class BookingSteps {
     private final BookingService bookingService = new BookingService();
@@ -39,6 +39,7 @@ public class BookingSteps {
                 bookingData.get("email"),
                 bookingData.get("phone")
         );
+        SchemaValidator.validate(bookingRequest,"schemas/booking-request-schema.json");
     }
 
     @When("I create the booking")
@@ -86,5 +87,11 @@ public class BookingSteps {
     @When("I create the booking without the {string} field")
     public void createBookingWithoutField(String fieldName) {
         response = bookingService.createBookingWithoutField(bookingRequest,fieldName);
+    }
+
+    @Then("the response should match the booking schema")
+    public void verifyResponseSchema() {
+        response.then().assertThat()
+                .body(matchesJsonSchemaInClasspath("schemas/booking-response-schema.json"));
     }
 }

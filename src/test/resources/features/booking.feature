@@ -14,6 +14,7 @@ Feature: Create a hotel booking
       | phone       | <phone>       |
     When I create the booking
     Then the booking request should be "created" with status code 200
+    Then the response should match the booking schema
     Examples:
       | roomId | firstName          | lastName           | depositPaid | checkIn    | checkOut   | email                  | phone                 |
       # Standard valid booking - depositPaid = true
