@@ -103,5 +103,8 @@ src/test
     ├── features
     │   ├── booking.feature
     │   └── messages.feature
+	│   schemas
+	│   ├── booking-request-schema.json
+	│   └── booking-request-schema.json
     └── spec
         └── booking.yaml
