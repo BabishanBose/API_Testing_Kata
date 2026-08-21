@@ -8,8 +8,12 @@ import static io.restassured.RestAssured.given;
 
 public class BookingService {
     public Response createBooking(BookingRequest bookingRequest) {
+        String username = System.getProperty("username");
+        String password = System.getProperty("password");
         return given()
                 .baseUri(ApiConfig.BASE_URL)
+                .auth()
+                .basic(username, password)
                 .contentType("application/json")
                 .body(bookingRequest)
                 .when()
