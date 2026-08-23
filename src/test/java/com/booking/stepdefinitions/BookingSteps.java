@@ -12,7 +12,7 @@ import io.cucumber.java.en.Then;
 import io.restassured.response.Response;
 import java.util.List;
 import java.util.Map;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
@@ -51,37 +51,52 @@ public class BookingSteps {
     public void verifyBookingResponse(String expectedResult, int expectedStatusCode) {
         assertEquals(expectedStatusCode, response.getStatusCode());
         if ("rejected".equalsIgnoreCase(expectedResult)) {
-            assertNotNull(response.jsonPath().get("errors"));
+            assertNotNull(response.jsonPath().get("errors"),
+                    "Rejected booking response should contain an 'errors' field");
         }
     }
 
     @Then("the response should contain error {string}")
     public void verifyResponseError(String expectedError) {
         List<String> errors = response.jsonPath().getList("errors");
-        assertNotNull(errors);
-        assertTrue(errors.contains(expectedError));
+        assertNotNull(errors,
+                "Booking API error response should contain an 'errors' field");
+        assertTrue(errors.contains(expectedError),
+                "Unexpected API error message. "
+                        + "Expected: '" + expectedError
+                        + "', Actual: '" + errors + "'");
     }
 
     @Then("the booking details should match the request")
     public void verifyBookingDetails() {
-        assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING_ID));
-        assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING));
+        assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING_ID),
+                "Booking ID is missing from the API response");
+        assertNotNull(response.jsonPath().get(ApiResponsePaths.BOOKING),
+                "Booking object is missing from the API response");
         assertEquals(bookingRequest.getRoomid(),
-                response.jsonPath().getInt(ApiResponsePaths.ROOM_ID));
+                response.jsonPath().getInt(ApiResponsePaths.ROOM_ID),
+                "Room ID in response does not match the booking request");
         assertEquals(bookingRequest.getFirstname(),
-                response.jsonPath().getString(ApiResponsePaths.FIRST_NAME));
+                response.jsonPath().getString(ApiResponsePaths.FIRST_NAME),
+                "First name in response does not match the booking request");
         assertEquals(bookingRequest.getLastname(),
-                response.jsonPath().getString(ApiResponsePaths.LAST_NAME) );
+                response.jsonPath().getString(ApiResponsePaths.LAST_NAME),
+                "Last name in response does not match the booking request");
         assertEquals(bookingRequest.isDepositpaid(),
-                response.jsonPath().getBoolean(ApiResponsePaths.DEPOSIT_PAID));
+                response.jsonPath().getBoolean(ApiResponsePaths.DEPOSIT_PAID),
+                "Deposit paid status in response does not match the booking request");
         assertEquals(bookingRequest.getEmail(),
-                response.jsonPath().getString(ApiResponsePaths.EMAIL));
+                response.jsonPath().getString(ApiResponsePaths.EMAIL),
+                "Email in response does not match the booking request");
         assertEquals(bookingRequest.getPhone(),
-                response.jsonPath().getString(ApiResponsePaths.PHONE));
+                response.jsonPath().getString(ApiResponsePaths.PHONE),
+                "Phone number in response does not match the booking request");
         assertEquals(bookingRequest.getBookingdates().getCheckin(),
-                response.jsonPath().getString(ApiResponsePaths.CHECK_IN));
+                response.jsonPath().getString(ApiResponsePaths.CHECK_IN),
+                "Check-in date in response does not match the booking request");
         assertEquals(bookingRequest.getBookingdates().getCheckout(),
-                response.jsonPath().getString(ApiResponsePaths.CHECK_OUT));
+                response.jsonPath().getString(ApiResponsePaths.CHECK_OUT),
+                "Check-out date in response does not match the booking request");
     }
 
     @When("I create the booking without the {string} field")
